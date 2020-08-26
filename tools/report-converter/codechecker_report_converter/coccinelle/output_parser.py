@@ -43,7 +43,7 @@ class CoccinelleParser(BaseParser):
         for line in f.readlines():
             match = self.message_line_re.match(line)
             if match:
-                print(match.group('line'))
+                print(match.group('message'))
 
 ccp = CoccinelleParser()
 ccp.parse_coccinelle()
