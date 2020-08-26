@@ -19,14 +19,15 @@ import re
 
 # from ..output_parser import Message, BaseParser
 # from codechecker.tools.report-converter.codechecker_report_converter.output_parser import Message,BaseParser
-from ..output_parser import BaseParser
+from ..output_parser import BaseParser, Message
 LOG = logging.getLogger('ReportConverter')
 
 class CoccinelleParser(BaseParser):
     """
     Parser for Coccinelle Output
     """
-    def parse_coccinelle(self):
+    def __init__(self):
+        super(CoccinelleParser, self).__init__()
 
         self.message_line_re = re.compile(
             # File path followed by a ':'.
@@ -37,13 +38,24 @@ class CoccinelleParser(BaseParser):
             r'(?P<message>[\S \t]+)\s*')
 
         # Open a sample coccicheck output file
+
+    def parse_message(self):
         f = open('codechecker_report_converter/coccinelle/kernel-output.txt', 'r')
-        match_list = []
+        message_list = []
 
         for line in f.readlines():
             match = self.message_line_re.match(line)
             if match:
-                print(match.group('message'))
+                # print(match.group('message'))
+                message = Message(
+                    os.path.abspath(match.group('path')),
+                    int(match.group('line')),
+                    0,
+                    match.group('message').strip(),
+                    None)
+                message_list.append(message)
+
+        return message_list
 
 ccp = CoccinelleParser()
-ccp.parse_coccinelle()
+messages = ccp.parse_message()
