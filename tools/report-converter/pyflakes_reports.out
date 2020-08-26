@@ -1,0 +1,31 @@
+/home/jay/Eye-Blinker/driver.py:2:1 'PyQt5.QtWidgets.QWidget' imported but unused
+/home/jay/Eye-Blinker/driver.py:3:1 'PyQt5.QtGui.QIcon' imported but unused
+/home/jay/Eye-Blinker/generate_report.py:11:9 local variable 'reportName' is assigned to but never used
+/home/jay/Eye-Blinker/generate_report.py:12:16 undefined name 'reportNamed'
+/home/jay/Eye-Blinker/detect_blinks.py:12:1 'imutils.video.FileVideoStream' imported but unused
+/home/jay/Eye-Blinker/detect_blinks.py:13:1 'imutils.video.VideoStream' imported but unused
+/home/jay/Eye-Blinker/detect_blinks.py:15:1 'numpy as np' imported but unused
+/home/jay/Eye-Blinker/detect_blinks.py:16:1 'argparse' imported but unused
+/home/jay/Eye-Blinker/detect_blinks.py:94:2 local variable 'fileStream' is assigned to but never used
+/home/jay/Eye-Blinker/test_size.py:1:1 'scipy.spatial.distance as dist' imported but unused
+/home/jay/Eye-Blinker/test_size.py:2:1 'imutils.video.FileVideoStream' imported but unused
+/home/jay/Eye-Blinker/test_size.py:3:1 'imutils.video.VideoStream' imported but unused
+/home/jay/Eye-Blinker/test_size.py:4:1 'imutils.face_utils' imported but unused
+/home/jay/Eye-Blinker/test_size.py:5:1 'numpy as np' imported but unused
+/home/jay/Eye-Blinker/test_size.py:6:1 'argparse' imported but unused
+/home/jay/Eye-Blinker/test_size.py:11:1 'subprocess' imported but unused
+/home/jay/Eye-Blinker/test_size.py:12:1 'level3' imported but unused
+/home/jay/Eye-Blinker/test_size.py:13:1 'bright' imported but unused
+/home/jay/Eye-Blinker/test_size.py:14:1 'generate_report' imported but unused
+/home/jay/Eye-Blinker/test_size.py:20:2 local variable 'predictor' is assigned to but never used
+/home/jay/Eye-Blinker/test_size.py:33:2 local variable 'endTime' is assigned to but never used
+/home/jay/Eye-Blinker/test_size.py:56:4 undefined name 'playsound'
+/home/jay/Eye-Blinker/level3.py:1:1 'scipy.spatial.distance as dist' imported but unused
+/home/jay/Eye-Blinker/level3.py:2:1 'imutils.video.FileVideoStream' imported but unused
+/home/jay/Eye-Blinker/level3.py:3:1 'imutils.video.VideoStream' imported but unused
+/home/jay/Eye-Blinker/level3.py:4:1 'imutils.face_utils' imported but unused
+/home/jay/Eye-Blinker/level3.py:5:1 'numpy as np' imported but unused
+/home/jay/Eye-Blinker/level3.py:6:1 'argparse' imported but unused
+/home/jay/Eye-Blinker/level3.py:9:1 'dlib' imported but unused
+/home/jay/Eye-Blinker/level3.py:11:1 'subprocess' imported but unused
+/home/jay/Eye-Blinker/level3.py:26:3 local variable 'endTime' is assigned to but never used
