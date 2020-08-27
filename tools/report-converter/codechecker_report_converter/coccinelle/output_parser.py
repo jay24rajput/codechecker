@@ -26,27 +26,62 @@ class CoccinelleParser(BaseParser):
     """
     Parser for Coccinelle Output
     """
-    def __init__(self):
+    def __init__(self, analyzer_result):
         super(CoccinelleParser, self).__init__()
+
+        self.analyzer_result = analyzer_result
 
         self.message_line_re = re.compile(
             # File path followed by a ':'.
             r'^(?P<path>[\S ]+?):'
             # Line number followed by a ':'.
             r'(?P<line>\d+?):'
+            # r'(?P<column>(\d+?)-(\d+?):)'
+            # r'(?P<bug>[\S ]+?:)'
             # Message.
             r'(?P<message>[\S \t]+)\s*')
 
-        # Open a sample coccicheck output file
 
-    def parse_message(self):
+    def parse_message(self, it, line):
+        """
+        Actual Parsing function for the given line
+        """
+        match = self.message_line_re.match(line)
+        if match is None:
+            return None, next(it)
+
+        file_path = os.path.join(os.path.dirname(self.analyzer_result),
+                                 match.group('path'))
+        column = 0
+        checker_name = None
+
+        message = Message(
+            file_path,
+            int(match.group('line')),
+            column,
+            match.group('message').strip(),
+            checker_name)
+
+        try:
+            return message, next(it)
+        except StopIteration:
+            return message, ''
+
+
+    def parse_message_direct(self):
+        """
+        This is a test function for parsing the contents of the file
+        directly via hardcoding them
+        """
+
+        # Open a sample coccicheck output file
         f = open('codechecker_report_converter/coccinelle/kernel-output.txt', 'r')
         message_list = []
 
         for line in f.readlines():
             match = self.message_line_re.match(line)
             if match:
-                # print(match.group('message'))
+                print(match.group('bug'))
                 message = Message(
                     os.path.abspath(match.group('path')),
                     int(match.group('line')),
@@ -57,5 +92,5 @@ class CoccinelleParser(BaseParser):
 
         return message_list
 
-ccp = CoccinelleParser()
-messages = ccp.parse_message()
+# ccp = CoccinelleParser()
+# messages = ccp.parse_message_direct()
