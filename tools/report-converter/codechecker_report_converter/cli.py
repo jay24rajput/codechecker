@@ -7,7 +7,6 @@
 #
 # -------------------------------------------------------------------------
 
-
 import argparse
 import logging
 import os
@@ -51,7 +50,7 @@ from codechecker_report_converter.golint.analyzer_result import \
 from codechecker_report_converter.pyflakes.analyzer_result import \
     PyflakesAnalyzerResult  # noqa
 from codechecker_report_converter.coccinelle.analyzer_result import \
-    CoccinelleAnalyzerResult #noqa
+    CoccinelleAnalyzerResult  # noqa
 
 
 LOG = logging.getLogger('ReportConverter')
