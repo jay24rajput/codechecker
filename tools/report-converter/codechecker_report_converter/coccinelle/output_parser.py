@@ -29,7 +29,7 @@ class CoccinelleParser(BaseParser):
             r'^(?P<path>[\S ]+?):'
             # Line number followed by a ':'.
             r'(?P<line>\d+?):'
-            # r'(?P<column>(\d+?)-(\d+?):)'
+            r'(?P<column>(\d+?)-(\d+?):)'
             # r'(?P<bug>[\S ]+?:)'
             # Message.
             r'(?P<message>[\S \t]+)\s*')
@@ -44,13 +44,12 @@ class CoccinelleParser(BaseParser):
 
         file_path = os.path.join(os.path.dirname(self.analyzer_result),
                                  match.group('path'))
-        column = 0
         checker_name = None
 
         message = Message(
             file_path,
             int(match.group('line')),
-            column,
+            match.group('column'),
             match.group('message').strip(),
             checker_name)
 
