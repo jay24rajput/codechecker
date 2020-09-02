@@ -42,8 +42,14 @@ class CoccinelleParser(BaseParser):
         if match is None:
             return None, next(it)
 
+        matched_path = match.group('path')
+        matched_path = matched_path.split('./')[1]
+
         file_path = os.path.join(os.path.dirname(self.analyzer_result),
-                                 match.group('path'))
+                                 matched_path)
+
+        # file_path = os.path.join(os.path.dirname(self.analyzer_result),
+        #                          match.group('path'))
         checker_name = None
 
         message = Message(

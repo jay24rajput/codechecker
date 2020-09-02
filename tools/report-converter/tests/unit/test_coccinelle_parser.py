@@ -7,7 +7,7 @@
 # -------------------------------------------------------------------------
 
 """
-This module tests the correctness of the PyflakesAnalyzerResult, which
+This module tests the correctness of the CoccinelleAnalyzerResult, which
 used in sequence transform Pyflakes output to a plist file.
 """
 
@@ -39,7 +39,7 @@ class CoccinelleAnalyzerResultTestCase(unittest.TestCase):
     def test_no_cocci_output_file(self):
         """ Test transforming single cocci file. """
         analyzer_result = os.path.join(self.test_files, 'files',
-                                       'sample.cocci')
+                                       'sample.c')
 
         ret = self.analyzer_result.transform(analyzer_result,
                                              self.cc_result_dir)
@@ -65,7 +65,7 @@ class CoccinelleAnalyzerResultTestCase(unittest.TestCase):
             res = plistlib.load(pfile)
 
             # Use relative path for this test.
-            res['files'][0] = os.path.join('files', 'sample.cocci')
+            res['files'][0] = os.path.join('files', 'sample.c')
 
             self.assertTrue(res['metadata']['generated_by']['version'])
             res['metadata']['generated_by']['version'] = "x.y.z"
