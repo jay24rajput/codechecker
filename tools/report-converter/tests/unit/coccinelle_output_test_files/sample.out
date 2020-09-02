@@ -1,0 +1,3 @@
+./sound/soc/amd/sample.c:444:5-16: WARNING: Comparison to bool
+./sound/soc/amd/sample.c:524:6-14: WARNING: Comparison to bool
+./sound/soc/amd/sample.c:532:6-14: WARNING: Comparison to bool
