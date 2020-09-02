@@ -48,8 +48,7 @@
 	</array>
 	<key>files</key>
 	<array>
-		<!-- <string>/media/jay/New-Volume/linux-5.9-rc1/tools/usb/testusb.c</string> -->
-		<string>files/simple.c</string>
+		<string>files/sample.c</string>
 	</array>
 	<key>metadata</key>
 	<dict>
@@ -63,7 +62,7 @@
 			<key>name</key>
 			<string>report-converter</string>
 			<key>version</key>
-			<string>0.1.0</string>
+			<string>x.y.z</string>
 		</dict>
 	</dict>
 </dict>
