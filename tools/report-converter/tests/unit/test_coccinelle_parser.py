@@ -22,6 +22,7 @@ import unittest
 from codechecker_report_converter.coccinelle.analyzer_result import \
     CoccinelleAnalyzerResult
 
+
 class CoccinelleAnalyzerResultTestCase(unittest.TestCase):
     """ Test the output of the CoccinelleAnalyzerResult. """
 
