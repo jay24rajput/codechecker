@@ -1136,6 +1136,33 @@ def __register_runs(parser):
                         help="Sort order of the run data.")
 
 
+def __register_importer(parser):
+    """
+    Add argparser subcommand for the "import run by run name action"
+    """
+    parser.add_argument('-n', '--name',
+                        type=str,
+                        dest="name",
+                        metavar='RUN_NAME',
+                        default=argparse.SUPPRESS,
+                        required=False,
+                        help="Name of the run where findings are to "
+                        "be imported. If no name is provided, the tool"
+                        "will check for run with the name of the json "
+                        "file imported")
+
+    
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-i', '--import',
+                        type=str,
+                        dest="input",
+                        metavar='JSON_FILE',
+                        default=argparse.SUPPRESS,
+                        help="Import findings from the json file into "
+                        "the database.")
+    
+
+
 def __register_run_histories(parser):
     """
     Add argparse subcommand parser for the "list run histories by run name"
@@ -1425,6 +1452,18 @@ full runs.""",
     __register_login(login)
     login.set_defaults(func=cmd_line_client.handle_login)
     __add_common_arguments(login, needs_product_url=False)
+
+    importer = subcommands.add_parser(
+        'import',
+        formatter_class=arg.RawDescriptionDefaultHelpFormatter,
+        description="Import the results into codechecker server",
+        help="Import the analysis from a json file into"
+        "codechecker for a given run"
+    )
+    __register_importer(importer)
+    importer.set_defaults(func=cmd_line_client.handle_import)
+    __add_common_arguments(importer)
+
 
 # 'cmd' does not have a main() method in itself, as individual subcommands are
 # handled later on separately.
