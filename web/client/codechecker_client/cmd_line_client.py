@@ -1627,3 +1627,42 @@ def handle_list_run_histories(args):
                          h.description if h.description else ''))
 
         print(twodim.to_str(args.output_format, header, rows))
+
+
+def handle_import(args):
+    """
+    Argument handler for the 'CodeChecker cmd import' subcommand
+    """
+
+    init_logger(args.verbose if 'verbose' in args else None)
+
+    client = setup_client(args.product_url)
+
+    # If name is not provided get name from input json file
+    if 'name'not in args:
+        name = os.path.basename(args.input)
+        name = name.split('.')[0]
+
+    else:
+        name = args.name
+
+    run_info = check_run_names(client, [name])
+    run = run_info.get(name)
+
+    with open(args.input) as input_file:
+        data = json.load(input_file)
+
+    data = filter_json(data)
+    
+
+def filter_json(reports):
+    formatted = []
+    for report in reports:
+        if report['details']['comments']:
+            data = {}
+            data["bugHash"] = report["bugHash"]
+            data["reportId"] = report["reportId"]
+            data["comments_data"] = report['details']['comments']
+            formatted.append(data)
+
+    return formatted
