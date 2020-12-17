@@ -1646,23 +1646,21 @@ def handle_import(args):
     else:
         name = args.name
 
-    run_info = check_run_names(client, [name])
-    run = run_info.get(name)
-
     with open(args.input) as input_file:
-        data = json.load(input_file)
+        import_results = json.load(input_file)
 
-    data = filter_json(data)
-    
+    import_results = filter_json(import_results)
+    for report_id in import_results:
+        report = client.getReportDetails(report_id)
+        report_comments = report.comments
+        # print(report_comments)
+        print(import_results[report_id])
+        print('\n\n\n\n')
 
 def filter_json(reports):
-    formatted = []
+    formatted = {}
     for report in reports:
         if report['details']['comments']:
-            data = {}
-            data["bugHash"] = report["bugHash"]
-            data["reportId"] = report["reportId"]
-            data["comments_data"] = report['details']['comments']
-            formatted.append(data)
+            formatted[report["reportId"]] = report['details']['comments']
 
     return formatted
