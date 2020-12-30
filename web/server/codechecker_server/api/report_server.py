@@ -1549,14 +1549,16 @@ class ThriftRequestHandler(object):
         with DBSession(self.__Session) as session:
             return get_report_details(session, [reportId])[reportId]
 
-    def _setReviewStatus(self, session, report_id, status, message, date=None):
+    def _setReviewStatus(self, session, report_hash, status,
+                         message, date=None):
         """
         This function sets the review status of the given report. This is the
         implementation of changeReviewStatus(), but it is also extended with
         a session parameter which represents a database transaction. This is
         needed because during storage a specific session object has to be used.
         """
-        report = session.query(Report).get(report_id)
+        report = session.query(Report).filter(Report.bug_id == report_hash)\
+            .all()[0]
         if report:
             review_status = session.query(ReviewStatus).get(report.bug_id)
             if review_status is None:
@@ -1641,7 +1643,9 @@ class ThriftRequestHandler(object):
                 codechecker_api_shared.ttypes.ErrorCode.GENERAL, msg)
 
         with DBSession(self.__Session) as session:
-            res = self._setReviewStatus(session, report_id, status, message)
+            report = session.query(Report).get(report_id)
+            res = self._setReviewStatus(
+                session, report.bug_id, status, message)
             session.commit()
 
             LOG.info("Review status of report '%s' was changed to '%s' by %s.",
@@ -2830,7 +2834,7 @@ class ThriftRequestHandler(object):
                             rw_status = ttypes.ReviewStatus.INTENTIONAL
 
                         self._setReviewStatus(session,
-                                              report_id,
+                                              bug_id,
                                               rw_status,
                                               src_comment_data[0]['message'],
                                               run_history_time)
@@ -3338,3 +3342,57 @@ class ThriftRequestHandler(object):
 
         return ExportData(comments=comment_data_list,
                           reviewData=review_data_list)
+
+    @exc_to_thrift_reqfail
+    @timeit
+    def importData(self, exportData):
+        self.__require_admin()
+        with DBSession(self.__Session) as session:
+
+            # Logic for importing comments
+            comment_bug_ids = list(exportData.comments.keys())
+            comment_query = session.query(Comment) \
+                .filter(Comment.bug_hash.in_(comment_bug_ids)) \
+                .order_by(Comment.created_at.desc())
+            comments_in_db = defaultdict(list)
+            for comment in comment_query:
+                comments_in_db[comment.bug_hash].append(comment)
+            for bug_hash, comments in exportData.comments.items():
+                db_comments = comments_in_db[bug_hash]
+                for comment in comments:
+                    date = datetime.strptime(comment.createdAt,
+                                             '%Y-%m-%d %H:%M:%S.%f')
+                    message = comment.message.encode('utf-8') \
+                        if comment.message else b''
+                    # See if the comment is already in the database.
+                    if any(c.created_at == date and
+                           c.kind == comment.kind and
+                           c.message == message for c in db_comments):
+                        continue
+                    c = Comment(bug_hash, comment.author, message,
+                                comment.kind, date)
+                    session.add(c)
+
+            # Logic for importing review status
+            review_bug_ids = list(exportData.reviewData.keys())
+            review_query = session.query(ReviewStatus) \
+                .filter(ReviewStatus.bug_hash.in_(review_bug_ids)) \
+                .order_by(ReviewStatus.date.desc())
+            db_review_data = {}
+            for review_status in review_query:
+                db_review_data[review_status.bug_hash] = review_status
+            for bug_hash, imported_review in exportData.reviewData.items():
+                db_status = db_review_data.get(bug_hash)
+                # The status is up-to-date.
+                if db_status and str(db_status.date) == imported_review.date:
+                    continue
+                date = datetime.strptime(imported_review.date,
+                                         '%Y-%m-%d %H:%M:%S.%f')
+                _ = self._setReviewStatus(session,
+                                          bug_hash,
+                                          imported_review.status,
+                                          imported_review.comment,
+                                          date)
+
+            session.commit()
+            return True
