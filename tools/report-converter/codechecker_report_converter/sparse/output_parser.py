@@ -10,7 +10,7 @@ import logging
 import os
 import re
 
-from ..output_parser import BaseParser, Message
+from ..output_parser import BaseParser, Message, Event
 LOG = logging.getLogger('ReportConverter')
 
 
@@ -33,6 +33,16 @@ class SparseParser(BaseParser):
             r'(?P<column>\d+?):'
             # Message.
             r'(?P<message>[\S \t]+)\s*')
+
+        self.note_line_re = re.compile(
+            r'^(?P<path>\.[\S ]+?):'
+            # Line number followed by a ':'.
+            r'(?P<line>\d+?):'
+            # Column number followed by a ':'.
+            r'(?P<column>\d+?):'
+            # Message.
+            r'(?P<message>[\S \t]+)\s*'
+        )
 
     def parse_message(self, it, line):
         """
@@ -57,7 +67,25 @@ class SparseParser(BaseParser):
             match.group('message').strip(),
             checker_name)
 
+        # try:
+        #     return message, next(it)
+        # except StopIteration:
+        #     return message, ''
         try:
-            return message, next(it)
+            line = next(it)
+            note_match = self.note_line_re.match(line)
+            while note_match:
+                file_path = os.path.normpath(
+                    os.path.join(os.path.dirname(self.analyzer_result),
+                                 note_match.group('path')))
+                message.events.append(Event(file_path,
+                                            int(note_match.group('line')),
+                                            int(note_match.group('column')),
+                                            note_match.group('message')
+                                            .strip()))
+                line = next(it)
+                note_match = self.note_line_re.match(line)
+
+            return message, line
         except StopIteration:
             return message, ''
